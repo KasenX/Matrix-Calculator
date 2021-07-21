@@ -1,0 +1,21 @@
+load examples/example_matrices1.db
+
+print all
+
+print x1
+print x2
+
+m1 = merge x1 x2 top
+print m1
+
+m2 = merge x1 x2 side
+print m2
+
+g1 = gem m1
+print g1
+
+g2 = gem m2
+print g2
+
+s1 = split g1 [7][7] (2,3)
+print s1

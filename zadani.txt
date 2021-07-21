@@ -1,0 +1,94 @@
+Maticová kalkulačka
+Autor: Jakub Janeček
+
+## Zadání z Progtestu
+
+Vytvořte aplikaci implementující maticovou kalkulačku.
+
+Kalkulačka musí implementovat:
+
+- práci s maticemi různé velikosti
+- základní operace: sčítání, odčítání, násobení, transpozice
+- sloučení (3x3 sloučeno s 3x3 => matice 6x3) a oříznutí (např. pouze levá polovina matice 6x3 => levá 3x3)
+- pro čtvertcové matice navíc výpočet inverze
+- efektivní paměťovou reprezentaci (pro řídké matice se nehodí 2D pole, pro husté matice naopak)
+- funkce pro výpočet determinantu, určení hodnosti, Gaussova eliminační metoda
+- proměnné (uložení matice do proměnné, načítání matice ze vstupu, využití proměnné ve výpočtu)
+- uložení matice (v efektivní reprezentaci) do souboru a její načtení ze souboru
+
+Použití polymorfismu (doporučeně):
+
+- typ matice: proměnná, řídká (mapa, list) vs. hustá (2D pole)
+- operace: sčítání, odčítání, násobení, ...
+- varianta GEMu: klasická, s komentářem
+
+Ukázka běhu programu (není závazná):
+
+SCAN X[3][3]
+Y[3][3] = 1 // jednotkova matice
+Z = MERGE X Y
+GEM Z -v // s detaily
+X = SPLIT Z [3][3] (3, 0) // z matice Z, chci jen 3x3 od pozice (3, 0)
+PRINT X
+
+
+## Vlastní zadání
+
+Kalkulačka rozlišuje interně 3 druhy matic
+
+- Hustou - reprezentovaná jako 2D pole
+- Řídkou - reprezenzovaná jako mapa (pokud má více než polovinu prvků nulových)
+- Jednotkovou - bez paměťové reprezentace
+
+Kalkulačka umožňuje práci s proměnnými. Každá matice musí mít unikátní jméno (string).
+Proměnné mohou být přepsány nebo ručně vymazány (viz níže).
+
+Matice podporuje následující maticové operace (mějme matice "X", "Y" a "Z" a skalár s):
+
+- sčítání: Z = X + Y
+- odečítání: Z = X - Y
+- násobení: Z = X * Y
+- násobení skalárem: Z = s * X
+- transpozice: Z = TRANSPOSE X // zkratka TRANS
+- sloučení: Z = MERGE X Y TOP nebo Z = MERGE X Y SIDE
+- oříznutí: Z = SPLIT X [3][3] (3,1) // z matice X, chci jen 3x3 od pozice (3, 1) - pozice se indexují od 1
+- inverze: Z = INVERSE X // zkratka INV
+- Gaussova eliminační metoda: Z = GEM X
+
+A následující funkce:
+
+- výpočet determinantu: DETERMINANT X // zkratka DET
+- určení hodnosti: RANK X
+
+Práce s maticovou databází (mějme matici "X"):
+
+- načtení matice: SCAN X[3][3]
+- načtení jednotkové matice: SCAN X[3][3] 1
+- vymazání matice: DELETE X // zkratka DEL
+- vymazání všech matic: DELETE ALL
+- uložení matice do souboru: SAVE X / SAVE ALL [cesta]
+- načtení matic ze souboru: LOAD <cesta>
+- zobrazení matice: PRINT X
+- výpis všech matic v databázi: PRINT ALL
+
+Ostatní příkazy:
+
+- zobrazení nápovědy: HELP
+- ukončení programu: QUIT
+
+Aplikace bude fungovat tak, že uživatel zadává různé matice, ty zpracovává metoda "parseInput" a následně je předává
+metodě "buildMatrix", která na základě rozhodnutí jaká paměťová reprezentace je výhodnější sestaví řídkou nebo hustou
+matici (speciálně jednotkovou). Metoda "buildMatrix", ale nepřímá pouze matice od uživatele, ale také matice, které
+vznikají různými operacemi, které také volá metoda "parseInput". BuildMatrix nerozlišuje odkud matice pochází, takže
+postupuje vždy stejně. Všechny matice ukládá do databáze matic.
+
+## Polymorfismus
+
+Polymorfismus využívám u abstraktní třídy "CMatrix" ze které dědí "CSparse", "CDense" a "CIdentity".
+Do maticových operací pak posílám abstraktní CMatrix, kde s ní pracuji vždy stejně a nezajímá mě, jakou má
+daná matice vnitřní reprezentaci.
+
+Dále využívám polymorfismus u jednotlivých operací. Všechny operace dědí ze třídy "Op", ze třídy "Op" dědí také
+třída "OpBinary", ze které následně dědí všechny binární operace. Při načítání operací od uživatele pak do obecné
+operace přiřadím operaci konkrétní a následně obecnou operaci spouštím a nezajímám mě co konkrétního se děje,
+očekávám pouze výsledek ze kterého sestrojím novou matici.

@@ -1,0 +1,39 @@
+scan x[3][3]
+1 2 3
+4 5 6
+7 8 9
+
+print x
+
+scan y[3][3]
+1 0 2
+0 3 2
+1 1 0
+
+print y
+
+sum_x_y = x + y
+print sum_x_y
+
+sub_x_y = x - y
+print sub_x_y
+
+sca_sub = 2.5 * sub_x_y
+print sca_sub
+
+trans_x = trans x
+print trans_x
+
+inverse_y = inv y
+print inverse_y
+
+identity = y * inverse_y
+print identity
+
+x = gem x
+print x
+
+y = gem y
+print y
+
+print all

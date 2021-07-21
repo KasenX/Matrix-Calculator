@@ -1,0 +1,17 @@
+scan x[4][4]
+4 4 2 8
+6 3 2 9
+1 0 8 7
+4 6 5 2
+
+print x
+
+rank x
+det x
+
+scan i[20][20] 1
+print i
+
+print all
+
+save all
